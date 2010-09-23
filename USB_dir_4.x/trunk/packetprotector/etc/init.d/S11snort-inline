@@ -1,0 +1,43 @@
+#!/bin/sh
+
+CONFIG_FILE="/etc/packetprotector.conf"
+SNORT_INLINE=`grep "snort-inline=" $CONFIG_FILE | cut -d "=" -f 2`
+if [ "X$SNORT_INLINE" = "X1" ] ; then
+	export LD_LIBRARY_PATH=/packetprotector/usr/lib
+	BASEDIR=/packetprotector
+
+	if [ ! -h /usr/local ] ; then
+		ln -s /packetprotector/usr /usr/local
+	fi
+
+	# My check code
+	lsmod | grep ip_queue > /dev/null
+	if [ $? -ne 0 ] ; then
+		insmod ip_queue
+	fi
+
+	if [ ! -d $BASEDIR/logs/snort-inline/ ] ; then
+		mkdir $BASEDIR/logs/snort-inline
+	fi
+	# End check code
+
+	$BASEDIR/usr/sbin/snort-inline -Q -D -c $BASEDIR/etc/snort/snort-inline.conf -l $BASEDIR/logs/snort-inline not host 127.0.0.1
+
+	# setup firewall rules 
+	/packetprotector/usr/sbin/queue_redirect.sh
+
+else
+	# My clean up code
+	mydate=`date +%Y%m%d%H%M`
+	LOGDIR=/packetprotector/logs
+	mv $LOGDIR/snort-inline/alert $LOGDIR/snort-inline/alert.$mydate && touch $LOGDIR/snort-inline/alert
+	# setup firewall rules 
+	/packetprotector/usr/sbin/queue_redirect.sh
+	killall snort-inline 2> /dev/null
+	# Not really neccessary to unload ip_queue
+	# rmmod ip_queue
+#	If you want to start clean un-rem the next statement
+	rm -rf $LOGDIR/snort-inline
+	# End cleanup code	
+fi
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+pid="$(cat /var/run/nas.wl0.pid 2>&-)"
+
+if [ -n "$pid" ] ; then
+	if [ -d "/proc/$pid" ] ; then
+		echo "Running!"
+	else
+		echo "Not running!"
+		/sbin/wifi
+	fi
+else
+	echo "PID file not found!"
+fi

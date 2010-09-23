@@ -1,0 +1,29 @@
+#!/bin/sh
+
+CONFIG_FILE="/etc/packetprotector.conf"
+PROXY=`grep "dansguardian=" $CONFIG_FILE | cut -d "=" -f 2`
+AV=`grep "dansguardian_av=" $CONFIG_FILE | cut -d "=" -f 2`
+if [ "X$PROXY" = "X1" ] ; then
+	export LD_LIBRARY_PATH=/packetprotector/usr/lib
+	BASEDIR=/packetprotector
+
+	if [ ! -d /packetprotector/tmp/dansguardian ] ; then
+		mkdir /packetprotector/tmp/dansguardian
+	fi
+	if [ ! -d /packetprotector/logs/dansguardian ] ; then
+		mkdir /packetprotector/logs/dansguardian
+	fi
+
+	if [ ! -h /usr/share/clamav ] ; then
+		ln -s /packetprotector/usr/share/clamav /usr/share/clamav
+	fi
+
+	if [ "X$AV" = "X1" ] ; then
+		$BASEDIR/usr/sbin/clamd -c /packetprotector/etc/clamd.conf
+	fi
+	$BASEDIR/usr/sbin/tinyproxy -c /packetprotector/etc/tinyproxy/tinyproxy.conf
+	$BASEDIR/usr/sbin/dansguardian -c /packetprotector/etc/dansguardian/dansguardian.conf
+	$BASEDIR/usr/sbin/http_redirect.sh
+else
+	rm -rf /packetprotector/logs/dansguardian
+fi

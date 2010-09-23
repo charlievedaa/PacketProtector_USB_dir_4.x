@@ -1,0 +1,41 @@
+# MIME types the virus scanning code ignores.
+
+#This file originally from:
+#http://dgav.sourceforge.net
+
+audio/mpeg
+audio/x-mpeg
+audio/x-pn-realaudio
+audio/x-wav
+audio/x-realaudio
+audio/x-pn-realaudio
+audio/vnd.rn-realaudio
+application/ogg
+application/x-shockwave-flash
+video/mpeg
+video/x-mpeg2
+video/acorn-replay
+video/quicktime
+video/x-msvideo
+video/msvideo
+video/vnd.rn-realvideo
+
+image/png
+image/gif
+image/tiff
+# http://www.kb.cert.org/vuls/id/297462
+image/jpeg
+image/bmp
+
+text/css
+text/html
+text/javascript
+text/plain
+text/xml
+
+application/javascript
+application/x-javascript
+application/json
+application/xml
+application/qss
+application/ocsp-response

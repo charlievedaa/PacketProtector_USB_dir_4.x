@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "# This is file generated from /packetprotector/etc/init.d/S99cron" > /etc/crontabs/root
+echo "# crond (provided by BusyBox) is started by /etc/rc.d/S50cron" >> /etc/crontabs/root
+echo "#" >> /etc/crontabs/root
+echo "# time fields: minute hour day_of_month month day_of_week" >> /etc/crontabs/root
+echo "# allowed values: 0-59 0-23 1-31 1-12 0-7" >> /etc/crontabs/root
+echo "# step values: */1 means run every minute (e.g. watchdog script below)" >> /etc/crontabs/root
+echo "#" >> /etc/crontabs/root
+echo "0 3 * * * /packetprotector/usr/sbin/snortlogrotate.sh > /dev/null" >> /etc/crontabs/root
+echo "0 4 * * * /packetprotector/usr/sbin/logrotate.sh > /dev/null" >> /etc/crontabs/root
+echo "0 5 * * * /packetprotector/usr/sbin/clamav_update.sh > /dev/null" >> /etc/crontabs/root
+echo "0 6 * * * /packetprotector/usr/sbin/snort_update.sh > /dev/null" >> /etc/crontabs/root
+echo "0,15,30,45 * * * * /packetprotector/usr/sbin/proxylogrotate.sh > /dev/null" >> /etc/crontabs/root
+echo "*/1 * * * * /packetprotector/usr/sbin/watchdog > /dev/null" >> /etc/crontabs/root

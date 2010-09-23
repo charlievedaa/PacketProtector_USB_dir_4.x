@@ -1,0 +1,10 @@
+#/bin/sh
+
+CONFIG_FILE="/etc/packetprotector.conf"
+OPENVPN=`grep "openvpn=" $CONFIG_FILE | cut -d "=" -f 2`
+if ([ -s /etc/easy-rsa/keys/dh1024.pem ] && [ "X$OPENVPN" = "X1" ]) ; then
+	BASEDIR=/packetprotector
+	/sbin/insmod tun
+	export LD_LIBRARY_PATH=/packetprotector/usr/lib
+	$BASEDIR/usr/sbin/openvpn $BASEDIR/etc/openvpn/server.conf
+fi

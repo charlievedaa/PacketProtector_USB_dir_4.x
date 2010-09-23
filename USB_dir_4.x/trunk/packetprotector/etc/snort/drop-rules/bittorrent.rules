@@ -1,0 +1,5 @@
+# By Chich Thierry
+# from bleedingsnort.com
+drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg: "BLEEDING-EDGE P2P BitTorrent peer sync"; flow: established; content:"|0000000d0600|"; offset: 0; depth: 6; reference:url,bitconjurer.org/BitTorrent/protocol.html; classtype: policy-violation; sid: 2000334; rev:7; )
+drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg: "BLEEDING-EDGE P2P BitTorrent Traffic"; flow: established; content:"|0000400907000000|"; offset: 0; depth: 8; reference:url,bitconjurer.org/BitTorrent/protocol.html; classtype: policy-violation; sid: 2000357; rev:3; )
+drop tcp $HOME_NET any -> $EXTERNAL_NET 6969 (msg: "BLEEDING-EDGE P2P BitTorrent Announce"; flow: to_server,established; content:"/announce"; reference:url,bitconjurer.org/BitTorrent/protocol.html; classtype: policy-violation; sid: 2000369; rev:4; )

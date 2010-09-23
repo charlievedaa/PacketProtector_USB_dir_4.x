@@ -1,0 +1,12 @@
+#!/bin/sh
+#set HOME_NET to LAN network
+
+BASEDIR=/packetprotector
+IP=`uci get network.lan.ipaddr`
+NETMASK=`uci get network.lan.netmask`
+eval "$(/bin/ipcalc.sh $IP $NETMASK)"
+CIDR="$NETWORK\/$PREFIX"
+
+#forward slash is escaped (above) for use in sed (below)
+sed -i "s/^var HOME_NET .*/var HOME_NET $CIDR/" $BASEDIR/etc/snort/snort-inline.conf 
+sed -i "s/^var DNS_SERVERS .*/var DNS_SERVERS [$IP]/" $BASEDIR/etc/snort/snort-inline.conf

@@ -1,0 +1,76 @@
+#!/bin/sh
+#restore config files, certificates, and passwords
+
+BACKUPDIR=/packetprotector/backup
+TEMPDIR=/packetprotector/backup/tmp
+
+if [ ! -d $TEMPDIR ] ; then
+	mkdir -p $TEMPDIR
+fi
+
+if [ $# != 1 ] ; then
+	echo "usage- restore [filename]"
+	echo "where [filename] is a .tar.gz file in /packetprotector/backup"
+	exit 0
+fi
+
+cd $BACKUPDIR
+rm -rf $TEMPDIR/*
+
+
+if [ -f $1 ] ; then
+	echo "restoring $1"
+	tar -zxf $1 
+	cd $TEMPDIR
+	for file in \
+		etc/packetprotector.conf \
+		etc/advanced_firewall.conf \
+		etc/passwd \
+		etc/shadow \
+		etc/freeradius/users \
+		www/cgi-bin/webif/.htpasswd \
+		www/cgi-bin/webif/vpn/.htpasswd
+	do
+		if [ ! -e $file ] ; then
+			echo "$file not found in backup archive"
+		fi
+		if [ -h /$file ] && [ -s $file ] ; then
+			rm -f /$file
+			echo "deleting /$file (symlink to /rom)"
+		fi
+		if [ -s $file ] ; then
+			cp $file /$file; chmod 644 /$file
+			echo "copying $file to /$file"
+		fi
+	done
+	
+	#restore keys directory
+	echo "restoring /etc/easy-rsa/keys directory"
+	cp -a etc/easy-rsa/keys/ /etc/easy-rsa
+	ln -sf /rom/etc/easy-rsa/keys/dh1024.pem /etc/easy-rsa/keys/dh1024.pem
+	
+	#restore vpn user directories
+	echo "restoring VPN user directories"
+	for i in `cut -f1 -d":" /www/cgi-bin/webif/vpn/.htpasswd`; do
+		cp -a www/$i /www
+		ln -sf /etc/easy-rsa/keys/ca.crt /www/$i/ca.crt
+		ln -sf /etc/easy-rsa/keys/$i.crt /www/$i/$i.crt
+		ln -sf /etc/easy-rsa/keys/$i.key /www/$i/$i.key
+	done
+	
+	#fixup file permissions
+	echo "fixing file permissions"
+	chmod 600 /etc/shadow
+	chmod 600 /etc/freeradius/users
+	chmod 600 /etc/easy-rsa/keys/*.key
+	chmod 600 /etc/easy-rsa/keys/.rnd
+	chmod 600 /etc/samba/private/*
+	
+	#cleanup backup/tmp directory
+	echo "cleaning up tmp directory"
+	rm -rf $TEMPDIR/*
+	
+	echo "done!"
+else
+	echo "$1 not found in /packetprotector/backup"
+fi

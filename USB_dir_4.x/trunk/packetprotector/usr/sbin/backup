@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+#backup config files, certificates, and passwords
+#
+
+if [ -h /packetprotector ] ; then
+
+BACKUPDIR=/packetprotector/backup
+TEMPDIR=/packetprotector/backup/tmp
+WEBDIR=/www/backup
+BACKUPTARBALL=backup_`date +%m%d%y`.tar
+
+if [ ! -d $TEMPDIR ] ; then
+	mkdir -p $TEMPDIR
+	echo "creating tmp directory"
+fi
+
+if [ ! -d $WEBDIR ] ; then
+	mkdir -p $WEBDIR
+	cp /www/cgi-bin/webif/.htpasswd $WEBDIR
+fi
+
+rm -rf $TEMPDIR/*
+echo "cleaning up tmp directory"
+cd $TEMPDIR
+
+mkdir etc
+echo "backing up /etc"
+cp /etc/packetprotector.conf $TEMPDIR/etc
+cp /etc/advanced_firewall.conf $TEMPDIR/etc
+cp /etc/passwd $TEMPDIR/etc
+cp /etc/shadow $TEMPDIR/etc
+
+mkdir -p etc/easy-rsa/keys
+cp -a /etc/easy-rsa/keys/ $TEMPDIR/etc/easy-rsa/ 2> /dev/null
+
+mkdir etc/freeradius
+cp /etc/freeradius/users $TEMPDIR/etc/freeradius
+
+mkdir www
+echo "backing up /www"
+for i in `cut -f1 -d":" /www/cgi-bin/webif/vpn/.htpasswd`; do
+	if [ -d /www/$i ] ; then
+		mkdir www/$i
+		cp /www/$i/.htpasswd www/$i
+		cp /www/$i/*.ovpn www/$i
+	fi
+done
+
+mkdir -p www/cgi-bin/webif
+cp /www/cgi-bin/webif/.htpasswd $TEMPDIR/www/cgi-bin/webif
+mkdir www/cgi-bin/webif/vpn
+cp /www/cgi-bin/webif/vpn/.htpasswd $TEMPDIR/www/cgi-bin/webif/vpn
+
+cd $BACKUPDIR
+echo "tarring and zipping the backup"
+tar -cf $BACKUPTARBALL tmp 
+if [ -e $BACKUPTARBALL.gz ] ; then
+	rm $BACKUPTARBALL.gz
+fi
+gzip $BACKUPTARBALL
+
+echo "backup successful!"
+echo "wrote $BACKUPDIR/$BACKUPTARBALL.gz"
+ln -s $BACKUPDIR/$BACKUPTARBALL.gz $WEBDIR/$BACKUPTARBALL.gz
+
+rm -rf $TEMPDIR/*
+
+else
+	echo "Missing directory /packetprotector.  Exiting."
+fi

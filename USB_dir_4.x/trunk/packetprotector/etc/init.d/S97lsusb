@@ -1,0 +1,5 @@
+#!/bin/sh
+
+if [ ! -h /usr/share/usb.ids ] ; then
+	ln -s /packetprotector/usr/share/usb.ids /usr/share/usb.ids
+fi
