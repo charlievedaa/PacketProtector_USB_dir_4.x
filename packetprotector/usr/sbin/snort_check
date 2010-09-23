@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Changed snort_check 12/22/09 - CMH714
+# 
+#
+
+# Set High that snort shouldnt go over
+# Default should be something very high like 140
+# The memory snort eats is relative to the rules enabled.
+HI_PCT="130"
+echo "hi pct - " $HI_PCT
+
+pid=`pidof snort-inline`
+echo "pid - " "$pid"
+if [ -n "$pid" ] ; then
+	SNORTPCT=`top -n1 | grep snort | grep $pid | cut -d% -f1 | awk '{print $NF}'`
+fi
+echo "snortpct - " "$SNORTPCT"
+
+SNORT_INLINE=`grep "snort-inline=" /etc/packetprotector.conf | cut -d "=" -f 2`
+
+if [ -n "$SNORTPCT" ] && [ -n "$pid" ] ; then
+	echo "Snorts running - Checking its Memory Usage"
+	if [ "$SNORTPCT" -gt "$HI_PCT" ] && [ -n "$pid" ] ; then
+		EPOCHTIME=`date +%s`
+		LOGDIR="/packetprotector/logs"
+		mv $LOGDIR/snort-inline/alert $LOGDIR/snort-inline/alert.$EPOCHTIME && touch $LOGDIR/snort-inline/alert
+		# Create a log file, assumes directory exists already
+		echo "snort needs to restart - killing snort" > /packetprotector/logs/snort-restart.log
+		echo `date` >> /packetprotector/logs/snort-restart.log
+#		killall snort-inline 2> /dev/null
+		killall -1 snort-inline 2> /dev/null
+#		restart snort - dont need to do this as watchdog will get it next time around
+#		/packetprotector/etc/init.d/S11snort-inline
+	fi
+elif ([ -n "$SNORTPCT" ] && [ -z "$pid" ]) || ([ -z "$SNORTPCT" ] && [ -n "$pid" ]) ; then
+	echo "Snort may be going up or down. Will check again next minute..."
+elif [ -z "$SNORTPCT" ] && [ -z "$pid" ] && [ "X$SNORT_INLINE" = "X1" ] ; then
+	echo "restarting snort"
+	echo "restarting snort" >> /packetprotector/logs/snort-restart.log
+	echo `date` >> /packetprotector/logs/snort-restart.log
+	/packetprotector/etc/init.d/S11snort-inline
+else
+	return
+fi
+

@@ -1,0 +1,113 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+	<title>PacketProtector- Access Denied</title>    	
+	<link rel="stylesheet" type="text/css" href="http://packetprotector.org/webif-2.css?-REASONGIVEN-">
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+<div id="container">
+        <div id="header">
+
+                <h1>X-Wrt Administration Console</h1>
+                <div id="short-status">
+                <h3>Status:</h3>
+                <ul>
+                        <li><strong>*</strong></li>
+                        <li><strong>*</strong></li>
+
+                        <li><strong>*</strong></li>
+                        <li><strong>*</strong></li>
+                </ul>
+                </div>
+        </div>
+			<div id="mainmenu"><h3>PacketProtector</h3></div>
+			<div id="submenu"><ul><li>Blocked by DansGuardian!</li></ul></div>
+
+
+
+	<div id="content">
+
+
+<FORM NAME="temp1">
+<INPUT TYPE="hidden" NAME="temp2">
+</FORM>
+
+	<script type="text/javascript">
+	var locate=window.location
+	document.temp1.temp2.value=locate
+	var urlstring=document.temp1.temp2.value
+	var urlsubstring=urlstring.substring(0,50)
+	var urlarray=urlstring.split("/")
+	var domainstring=urlarray[2]
+	var domainarray=domainstring.split(".")
+	var domainlen=domainarray.length
+
+        if (domainlen == 2)
+        {
+                var domain=domainarray[0]+"."+domainarray[1]
+        }
+
+        else if (domainlen == 3)
+        {
+                var tld=domainarray[2]
+                var lld=domainarray[0]
+                if (tld.length > 2)
+                {
+                var domain=domainarray[1]+"."+domainarray[2]
+                }
+                else
+                {
+                        if (lld =="www")
+                        {
+                        var domain=domainarray[1]+"."+domainarray[2]
+                        }
+                        else
+                        {
+                        var domain=domainarray[0]+"."+domainarray[1]+"."+domainarray[2]
+                        }
+                }
+        }
+
+        else
+        {
+                var domain=domainarray[domainlen-3]+"."+domainarray[domainlen-2]+"."+domainarray[domainlen-1]
+        }
+
+	document.write("</br></br>")
+	document.write("Access to this page on <b>"+domain+"</b></br>")
+	document.write("has been denied for the following reason- </br></br>")
+	document.write("<b>")
+	document.write("-REASONGIVEN-")
+	document.write("</b>")
+	
+	</script>
+
+
+	</div>
+
+        <div id="footer">
+        <h3>PacketProtector</h3>
+        <em>with X-Wrt Extensions</em>
+
+        </div>
+</div>
+</body>
+
+</html>
+
+<!--
+The available variables are as follows:
+- URL- gives the URL the user was trying to get to.
+- REASONGIVEN- gives the nice reason (i.e. not quoting the banned phrase).
+- REASONLOGGED- gives the reason that gets logged including full details.
+- USER- gives the username if known.
+- IP- gives the originating IP.
+- FILTERGROUP- gives the group number.
+- BYPASS- gives URL which allows temporary bypass of denied page
+
+You need to remove the space between the - and the variable to use them
+in your HTML.  They are there above so extra processing is not required.
+
+--!>
+

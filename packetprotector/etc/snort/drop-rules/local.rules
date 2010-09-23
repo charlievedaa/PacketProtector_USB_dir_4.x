@@ -1,0 +1,9 @@
+# $Id: local.rules,v 1.6 2003/10/20 15:03:10 chrisgreen Exp $
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+# ICMP alert for testing Snort
+# drop icmp any any <> any any (msg:"ICMP packet"; sid:1000001;)

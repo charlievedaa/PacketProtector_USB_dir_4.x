@@ -1,0 +1,15 @@
+#!/bin/sh
+
+BASEDIR=/packetprotector
+
+for i in `cat /etc/advanced_firewall.conf`; do
+	#echo $i
+	VAR=`echo $i | cut -d "=" -f1`
+	VALUE=`echo $i | cut -d "=" -f2`
+	if [ "X$VALUE" = "X1" ] ; then
+		$BASEDIR/etc/firewall/$VAR.sh block
+	fi
+	if [ "X$VALUE" = "Xunblock" ] ; then
+		$BASEDIR/etc/firewall/$VAR.sh unblock
+	fi
+done

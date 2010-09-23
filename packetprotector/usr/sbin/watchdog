@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/packetprotector/usr/sbin/nas_check &
+/packetprotector/usr/sbin/snort_check &

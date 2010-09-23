@@ -1,0 +1,7 @@
+#!/bin/sh
+
+TXPOWER=`uci -q get wireless.wl0.txpower`
+
+if [ "X$TXPOWER" != "X" ] ; then
+	wl txpwr1 $TXPOWER
+fi

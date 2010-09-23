@@ -1,0 +1,24 @@
+#!/bin/sh
+
+CONFIG_FILE="/etc/packetprotector.conf"
+FREERADIUS=`grep "freeradius=" $CONFIG_FILE | cut -d "=" -f 2`
+ENCRYPTION=`uci get wireless.@wifi-iface[0].encryption`
+if ([ -s /etc/easy-rsa/keys/dh1024.pem ] && [ "X$FREERADIUS" = "X1" ]) ; then
+   if [ X$ENCRYPTION = "Xwpa" ] || [ X$ENCRYPTION = "Xwpa2" ] ; then
+	export LD_LIBRARY_PATH=/packetprotector/usr/lib:/packetprotector/usr/lib/freeradius
+	BASEDIR=/packetprotector
+	
+	uci set wireless.@wifi-iface[0].server=127.0.0.1
+	uci set wireless.@wifi-iface[0].port=1812
+	uci set wireless.@wifi-iface[0].key=packetprotector
+	uci commit
+
+	LOG_D=/packetprotector/logs
+	RUN_D=/var/run
+	PID_F=$RUN_D/radiusd.pid
+
+	[ -d $LOG_D ] || mkdir -p $LOG_D
+	[ -d $RUN_D ] || mkdir -p $RUN_D
+	$BASEDIR/usr/sbin/radiusd -d $BASEDIR/etc/freeradius
+   fi
+fi

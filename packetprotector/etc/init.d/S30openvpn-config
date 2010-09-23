@@ -1,0 +1,10 @@
+#!/bin/sh
+#push LAN network route to OpenVPN clients
+
+BASEDIR=/packetprotector
+IP=`uci get network.lan.ipaddr`
+NETMASK=`uci get network.lan.netmask`
+eval "$(/bin/ipcalc.sh $IP $NETMASK)"
+
+awk -v network=$NETWORK -v netmask=$NETMASK '/^push \"route .*$/ {if (test==0) sub(/^push \"route .*$/, "push \"route "network" "netmask"\""); test=1} /.*/ {print}' $BASEDIR/etc/openvpn/server.conf > /tmp/server.conf
+mv /tmp/server.conf $BASEDIR/etc/openvpn/server.conf
