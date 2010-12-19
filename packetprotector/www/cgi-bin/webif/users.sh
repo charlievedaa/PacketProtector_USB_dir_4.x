@@ -28,6 +28,8 @@ if [ "$FORM_username" ] && [ "$FORM_password" ] && [ "$FORM_confirm" ] ; then
 				(echo $FORM_password; sleep 1; echo $FORM_password) | adduser -Hh /tmp -s /bin/false $FORM_username > /dev/null || echo 'Error creating user.<br />'
 			fi
 			echo '"'$FORM_username'"		Cleartext-Password := "'$FORM_password'"' >> /etc/freeradius/users || echo 'Error creating RADIUS user.<br />'
+			grep '^'$FORM_username':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/login/.htpasswd
+			grep '^'$FORM_username':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/proxy/.htpasswd
 			grep '^'$FORM_username':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/vpn/.htpasswd
 		
 			echo 'Completed!<br /><br />'			
@@ -59,6 +61,8 @@ for uid in `cut -d: -f3 /etc/passwd | egrep -v "^65534$`; do
 		deluser $user 2> /dev/null
 		delgroup $user 2> /dev/null
 		sed -i "s/^\"$user\".*$//" /etc/freeradius/users
+		sed -i "s/^$user:.*$//" /www/cgi-bin/webif/login/.htpasswd
+		sed -i "s/^$user:.*$//" /www/cgi-bin/webif/proxy/.htpasswd
 		sed -i "s/^$user:.*$//" /www/cgi-bin/webif/vpn/.htpasswd
 		if [ -d /www/$user ] ; then
 			rm -rf /www/$user
@@ -90,8 +94,16 @@ for uid in `cut -d: -f3 /etc/passwd | egrep -v "^65534$`; do
 				
 			fi
 
-                        # update .htpasswd in the VPN directory
+                        # update .htpasswd in the login, proxy, and VPN directories
 
+                        if [ -s /www/cgi-bin/webif/login/.htpasswd ] ; then
+				sed -i "s/^$user:.*$//" /www/cgi-bin/webif/login/.htpasswd
+				grep '^'$user':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/login/.htpasswd
+			fi
+                        if [ -s /www/cgi-bin/webif/proxy/.htpasswd ] ; then
+				sed -i "s/^$user:.*$//" /www/cgi-bin/webif/proxy/.htpasswd
+				grep '^'$user':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/proxy/.htpasswd
+			fi
                         if [ -s /www/cgi-bin/webif/vpn/.htpasswd ] ; then
 				sed -i "s/^$user:.*$//" /www/cgi-bin/webif/vpn/.htpasswd
 				grep '^'$user':' /etc/shadow | cut -d: -f1,2 >> /www/cgi-bin/webif/vpn/.htpasswd
