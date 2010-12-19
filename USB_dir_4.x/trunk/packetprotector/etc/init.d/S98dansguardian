@@ -21,6 +21,7 @@ if [ "X$PROXY" = "X1" ] ; then
 	if [ "X$AV" = "X1" ] ; then
 		$BASEDIR/usr/sbin/clamd -c /packetprotector/etc/clamd.conf
 	fi
+	chmod 777 /var/run
 	$BASEDIR/usr/sbin/tinyproxy -c /packetprotector/etc/tinyproxy/tinyproxy.conf
 	$BASEDIR/usr/sbin/dansguardian -c /packetprotector/etc/dansguardian/dansguardian.conf
 	$BASEDIR/usr/sbin/http_redirect.sh
