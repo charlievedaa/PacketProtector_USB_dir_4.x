@@ -5,7 +5,7 @@ FREERADIUS=`grep "freeradius=" $CONFIG_FILE | cut -d "=" -f 2`
 ENCRYPTION=`uci get wireless.@wifi-iface[0].encryption`
 if ([ -s /etc/easy-rsa/keys/dh1024.pem ] && [ "X$FREERADIUS" = "X1" ]) ; then
    if [ X$ENCRYPTION = "Xwpa" ] || [ X$ENCRYPTION = "Xwpa2" ] ; then
-	export LD_LIBRARY_PATH=/packetprotector/usr/lib:/packetprotector/usr/lib/freeradius
+	export LD_LIBRARY_PATH=/packetprotector/usr/lib:/packetprotector/usr/lib/freeradius2
 	BASEDIR=/packetprotector
 	
 	uci set wireless.@wifi-iface[0].server=127.0.0.1
