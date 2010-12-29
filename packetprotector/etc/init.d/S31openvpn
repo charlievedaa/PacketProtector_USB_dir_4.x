@@ -7,5 +7,4 @@ if ([ -s /etc/easy-rsa/keys/dh1024.pem ] && [ "X$OPENVPN" = "X1" ]) ; then
 	/sbin/insmod tun
 	export LD_LIBRARY_PATH=/packetprotector/usr/lib
 	$BASEDIR/usr/sbin/openvpn --config $BASEDIR/etc/openvpn/server.conf
-	$BASEDIR/usr/sbin/openvpn_allow.sh
 fi
