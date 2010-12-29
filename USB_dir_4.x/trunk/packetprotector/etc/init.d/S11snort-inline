@@ -24,7 +24,7 @@ if [ "X$SNORT_INLINE" = "X1" ] ; then
 	$BASEDIR/usr/sbin/snort-inline -Q -D -c $BASEDIR/etc/snort/snort-inline.conf -l $BASEDIR/logs/snort-inline not host 127.0.0.1
 
 	# setup firewall rules 
-	# /packetprotector/usr/sbin/queue_redirect.sh
+	/packetprotector/usr/sbin/queue_redirect.sh
 
 else
 	# My clean up code
