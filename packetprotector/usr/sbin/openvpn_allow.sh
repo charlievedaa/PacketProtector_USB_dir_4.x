@@ -4,7 +4,7 @@ CONFIG_FILE="/etc/packetprotector.conf"
 OPENVPN=`grep "openvpn=" $CONFIG_FILE | cut -d "=" -f 2`
 LAN=`/sbin/uci get network.lan.ifname`
 
-/bin/pidof openvpn
+/bin/pidof openvpn > /dev/null
 if [ $? = 0 ] ; then
 
 if [ "X$OPENVPN" = "X1" ] ; then
