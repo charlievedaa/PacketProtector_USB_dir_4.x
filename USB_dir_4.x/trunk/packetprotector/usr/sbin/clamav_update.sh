@@ -27,7 +27,7 @@ PROXY=`grep "dansguardian=" $CONFIG_FILE | cut -d "=" -f 2`
 #	nslookup db.local.clamav.net >> /packetprotector/logs/clam-update.log
 #	Change wget to curl
 #	wget http://db.local.clamav.net/daily.cvd
-	curl -# --user-agent clamav/0.96.3 http://db.local.clamav.net/daily.cvd -O
+	curl -# --user-agent clamav/0.96.5 http://db.local.clamav.net/daily.cvd -O
 	if [ $? -ne 0 ] ; then
 #		echo "failed to fetch" >> /packetprotector/logs/clam-update.log
 		echo "Failed to fetch daily.cvd!"
