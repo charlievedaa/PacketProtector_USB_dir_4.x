@@ -20,18 +20,18 @@ if [ -s /packetprotector/etc/snort/oinkcode ] ; then
 	backdoor_rule_count=200
 	web_client_rule_count=300
 
-	VRT_RULES=http://www.snort.org/pub-bin/oinkmaster.cgi/$OINKCODE/snortrules-snapshot-2860.tar.gz
-	VRT_RULES_MD5=http://www.snort.org/pub-bin/oinkmaster.cgi/$OINKCODE/snortrules-snapshot-2860.tar.gz.md5
+	VRT_RULES=http://www.snort.org/pub-bin/oinkmaster.cgi/$OINKCODE/snortrules-snapshot-2861.tar.gz
+	VRT_RULES_MD5=http://www.snort.org/pub-bin/oinkmaster.cgi/$OINKCODE/snortrules-snapshot-2861.tar.gz.md5
 
 	### test if this is a new VRT ruleset via the md5 file, skip if same
-	if [ ! -e /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2860.tar.gz.md5.OLD ] ; then
-		touch /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2860.tar.gz.md5.OLD
+	if [ ! -e /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2861.tar.gz.md5.OLD ] ; then
+		touch /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2861.tar.gz.md5.OLD
 	fi
 	curl -L -# $VRT_RULES_MD5 -O || return
-	diff -s snortrules-snapshot-2860.tar.gz.md5 /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2860.tar.gz.md5.OLD
+	diff -s snortrules-snapshot-2861.tar.gz.md5 /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2861.tar.gz.md5.OLD
 	
 	if [ $? = 1 ]; then
-		cp snortrules-snapshot-2860.tar.gz.md5 /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2860.tar.gz.md5.OLD
+		cp snortrules-snapshot-2861.tar.gz.md5 /packetprotector/etc/snort/drop-rules/snortrules-snapshot-2861.tar.gz.md5.OLD
 		echo "Fetching VRT rules!"
 		curl -L -# $VRT_RULES -O || return
 		tar -zxvf snortrules-snapshot-CURRENT.tar.gz rules/ > /dev/null 2> /dev/null
