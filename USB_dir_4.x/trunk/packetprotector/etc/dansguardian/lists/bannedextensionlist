@@ -28,7 +28,7 @@
 .ins
 .isp
 .its
-.js
+.jar
 .jse
 .ksh
 .lnk
@@ -79,4 +79,4 @@
 .wsc
 .wsf
 .wsh
-
+.zip
