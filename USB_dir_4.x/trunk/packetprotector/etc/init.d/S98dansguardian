@@ -18,9 +18,9 @@ if [ "X$PROXY" = "X1" ] ; then
 		ln -s /packetprotector/usr/share/clamav /usr/share/clamav
 	fi
 
-	if [ "X$AV" = "X1" ] ; then
-		$BASEDIR/usr/sbin/clamd -c /packetprotector/etc/clamd.conf
-	fi
+	#if [ "X$AV" = "X1" ] ; then
+	#	$BASEDIR/usr/sbin/clamd -c /packetprotector/etc/clamd.conf
+	#fi
 	chmod 777 /var/run
 	$BASEDIR/usr/sbin/tinyproxy -c /packetprotector/etc/tinyproxy/tinyproxy.conf
 	$BASEDIR/usr/sbin/dansguardian -c /packetprotector/etc/dansguardian/dansguardian.conf
